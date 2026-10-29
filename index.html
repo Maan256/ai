@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bistro Byte | Fresh & Fast</title>
+    <meta
+      name="description"
+      content="Order gourmet meals, burgers, sushi, and desserts from Bistro Byte."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav-wrap">
+        <div class="brand">
+          <div class="brand-mark">B</div>
+          <div>
+            <p class="brand-name">Bistro Byte</p>
+            <small>Kitchen & Grill</small>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a href="#menu">Menu</a>
+          <a href="#features">Why us</a>
+          <a href="#reviews">Reviews</a>
+        </nav>
+
+        <button class="pill-btn">Order now</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">Fresh. Fast. Flavor-packed.</span>
+            <h1>Order your favorite comfort food in minutes.</h1>
+            <p>
+              From juicy burgers to handcrafted bowls, we serve chef-curated
+              meals prepared fresh and delivered hot to your door.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#menu" class="primary-btn">Explore menu</a>
+              <button class="secondary-btn" id="quickOrder">Quick order</button>
+            </div>
+
+            <div class="hero-stats">
+              <div>
+                <strong>15k+</strong>
+                <span>happy diners</span>
+              </div>
+              <div>
+                <strong>18 min</strong>
+                <span>avg. delivery</span>
+              </div>
+              <div>
+                <strong>4.9/5</strong>
+                <span>customer rating</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-visual">
+            <div class="dish-card large-card">
+              <img
+                src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80"
+                alt="Signature burger"
+              />
+              <div class="dish-badge">
+                <span>Chef's pick</span>
+                <strong>Smoky BBQ Burger</strong>
+              </div>
+            </div>
+            <div class="floating-mini mini-one">
+              <span>🥤</span>
+              <div>
+                <strong>1 free drink</strong>
+                <small>on orders over $25</small>
+              </div>
+            </div>
+            <div class="floating-mini mini-two">
+              <span>⚡</span>
+              <div>
+                <strong>Fast delivery</strong>
+                <small>12-18 minutes</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="features" id="features">
+        <div class="container feature-grid">
+          <article>
+            <div class="feature-icon">🌿</div>
+            <h3>Fresh ingredients</h3>
+            <p>Locally sourced produce and premium proteins every day.</p>
+          </article>
+          <article>
+            <div class="feature-icon">🚚</div>
+            <h3>Hot delivery</h3>
+            <p>Fresh, fast, and tracked straight to your door.</p>
+          </article>
+          <article>
+            <div class="feature-icon">💳</div>
+            <h3>Easy checkout</h3>
+            <p>Secure ordering with flexible payment and pickup options.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="menu-section" id="menu">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Our menu</span>
+              <h2>Popular picks</h2>
+            </div>
+            <div class="filters" id="categoryFilters">
+              <button class="filter active" data-category="all">All</button>
+              <button class="filter" data-category="burgers">Burgers</button>
+              <button class="filter" data-category="bowls">Bowls</button>
+              <button class="filter" data-category="sushi">Sushi</button>
+              <button class="filter" data-category="desserts">Desserts</button>
+            </div>
+          </div>
+
+          <div class="menu-grid" id="menuGrid"></div>
+        </div>
+      </section>
+
+      <section class="reviews" id="reviews">
+        <div class="container">
+          <div class="section-head center">
+            <span class="eyebrow">The buzz</span>
+            <h2>What people are saying</h2>
+          </div>
+
+          <div class="review-grid">
+            <article>
+              <div class="stars">★★★★★</div>
+              <p>
+                “The burger was juicy, the fries were golden, and delivery was
+                lightning fast.”
+              </p>
+              <strong>— Maya T.</strong>
+            </article>
+            <article>
+              <div class="stars">★★★★★</div>
+              <p>
+                “I ordered sushi and dessert together and everything arrived
+                fresh and packed perfectly.”
+              </p>
+              <strong>— Alex R.</strong>
+            </article>
+            <article>
+              <div class="stars">★★★★★</div>
+              <p>
+                “Bistro Byte feels premium without the premium wait. The quality
+                is consistent.”
+              </p>
+              <strong>— Jordan F.</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="cart-panel" id="cartPanel">
+      <div class="cart-header">
+        <div>
+          <span class="eyebrow">Your order</span>
+          <h3>Cart</h3>
+        </div>
+        <span id="itemCount">0 items</span>
+      </div>
+
+      <div id="cartItems" class="cart-items">
+        <div class="empty-state">
+          <div class="empty-icon">🛒</div>
+          <p>Your cart is empty</p>
+          <small>Add some tasty dishes to get started.</small>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <strong id="subtotal">$0.00</strong>
+        </div>
+        <div class="summary-row">
+          <span>Delivery</span>
+          <strong id="deliveryFee">$4.99</strong>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total</span>
+          <strong id="total">$4.99</strong>
+        </div>
+      </div>
+
+      <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+    </aside>
+
+    <div class="toast" id="toast">Order placed successfully!</div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
