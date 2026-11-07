@@ -1,23 +1,44 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
 const deliveryFee = 4.99;
 
 export default function App() {
   const [menu, setMenu] = useState([]);
-  const [category, setCategory] = useState('all');
+  const [category, setCategory] = useState("all");
   const [cart, setCart] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const showMessage = (text) => {
+    setMessage(text);
+    window.clearTimeout(showMessage.timer);
+
+    if (text) {
+      showMessage.timer = window.setTimeout(() => setMessage(""), 1800);
+    }
+  };
 
   useEffect(() => {
-    fetch('/api/menu')
+    fetch("/api/menu")
       .then((res) => res.json())
-      .then((data) => setMenu(data))
-      .catch(() => setMessage('Could not load menu'));
+      .then((data) => {
+        setMenu(data);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        showMessage("Could not load menu");
+        setIsLoading(false);
+      });
+
+    return () => {
+      window.clearTimeout(showMessage.timer);
+    };
   }, []);
 
   const filteredMenu = useMemo(
     () =>
-      category === 'all'
+      category === "all"
         ? menu
         : menu.filter((item) => item.category === category),
     [menu, category],
@@ -36,9 +57,7 @@ export default function App() {
       return [...current, { ...item, quantity: 1 }];
     });
 
-    setMessage(`${item.name} added to cart`);
-    window.clearTimeout(addToCart.timer);
-    addToCart.timer = window.setTimeout(() => setMessage(''), 1400);
+    showMessage(`${item.name} added to cart`);
   };
 
   const updateQty = (id, diff) => {
@@ -51,38 +70,63 @@ export default function App() {
     );
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
     if (!cart.length) {
-      setMessage('Your cart is empty');
+      showMessage("Your cart is empty");
       return;
     }
 
     const payload = {
-      customer: { name: 'Guest Customer' },
+      customer: { name: "Guest Customer" },
       items: cart,
       total,
     };
 
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error('Failed to place order');
+      if (!res.ok) throw new Error("Failed to place order");
       setCart([]);
-      setMessage('Order placed successfully');
+      showMessage("Order placed successfully");
     } catch (error) {
-      setMessage('Checkout failed. Please try again.');
+      showMessage("Checkout failed. Please try again.");
+    }
+  };
+
+  const handleDesktopAction = (action) => {
+    if (window.electronAPI && typeof window.electronAPI[action] === 'function') {
+      window.electronAPI[action]();
     }
   };
 
   return (
     <div className="page-shell">
+      <div className="desktop-bar">
+        <div className="desktop-title">Bistro Byte</div>
+        <div className="window-actions">
+          <button className="window-btn minimize" onClick={() => handleDesktopAction('minimize')} aria-label="Minimize window" />
+          <button className="window-btn maximize" onClick={() => handleDesktopAction('maximize')} aria-label="Maximize window" />
+          <button className="window-btn close" onClick={() => handleDesktopAction('close')} aria-label="Close window" />
+        </div>
+      </div>
+
+      {isLoading && (
+        <div className="desktop-loading">
+          <div className="loading-ring" />
+          <p>Preparing your kitchen</p>
+        </div>
+      )}
+
       <header className="topbar">
         <div className="container nav-wrap">
           <div className="brand">
@@ -114,8 +158,17 @@ export default function App() {
                 meals prepared fresh and delivered hot to your door.
               </p>
               <div className="hero-actions">
-                <a href="#menu" className="primary-btn">Explore menu</a>
-                <button className="secondary-btn" onClick={() => document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' })}>
+                <a href="#menu" className="primary-btn">
+                  Explore menu
+                </a>
+                <button
+                  className="secondary-btn"
+                  onClick={() =>
+                    document
+                      .getElementById("menu")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
                   Quick order
                 </button>
               </div>
@@ -192,15 +245,19 @@ export default function App() {
                 <h2>Popular picks</h2>
               </div>
               <div className="filters">
-                {['all', 'burgers', 'bowls', 'sushi', 'desserts'].map((item) => (
-                  <button
-                    key={item}
-                    className={`filter ${category === item ? 'active' : ''}`}
-                    onClick={() => setCategory(item)}
-                  >
-                    {item === 'all' ? 'All' : item.charAt(0).toUpperCase() + item.slice(1)}
-                  </button>
-                ))}
+                {["all", "burgers", "bowls", "sushi", "desserts"].map(
+                  (item) => (
+                    <button
+                      key={item}
+                      className={`filter ${category === item ? "active" : ""}`}
+                      onClick={() => setCategory(item)}
+                    >
+                      {item === "all"
+                        ? "All"
+                        : item.charAt(0).toUpperCase() + item.slice(1)}
+                    </button>
+                  ),
+                )}
               </div>
             </div>
 
@@ -211,12 +268,17 @@ export default function App() {
                   <div className="item-body">
                     <div className="item-top">
                       <h3>{item.name}</h3>
-                      <span className="item-price">${item.price.toFixed(2)}</span>
+                      <span className="item-price">
+                        ${item.price.toFixed(2)}
+                      </span>
                     </div>
                     <p className="meta">{item.description}</p>
                     <div className="item-actions">
                       <span className="rating">★ {item.rating}</span>
-                      <button className="add-btn" onClick={() => addToCart(item)}>
+                      <button
+                        className="add-btn"
+                        onClick={() => addToCart(item)}
+                      >
                         Add
                       </button>
                     </div>
@@ -236,17 +298,26 @@ export default function App() {
             <div className="review-grid">
               <article>
                 <div className="stars">★★★★★</div>
-                <p>“The burger was juicy, the fries were golden, and delivery was lightning fast.”</p>
+                <p>
+                  “The burger was juicy, the fries were golden, and delivery was
+                  lightning fast.”
+                </p>
                 <strong>— Maya T.</strong>
               </article>
               <article>
                 <div className="stars">★★★★★</div>
-                <p>“I ordered sushi and dessert together and everything arrived fresh and packed perfectly.”</p>
+                <p>
+                  “I ordered sushi and dessert together and everything arrived
+                  fresh and packed perfectly.”
+                </p>
                 <strong>— Alex R.</strong>
               </article>
               <article>
                 <div className="stars">★★★★★</div>
-                <p>“Bistro Byte feels premium without the premium wait. The quality is consistent.”</p>
+                <p>
+                  “Bistro Byte feels premium without the premium wait. The
+                  quality is consistent.”
+                </p>
                 <strong>— Jordan F.</strong>
               </article>
             </div>
@@ -260,7 +331,9 @@ export default function App() {
             <span className="eyebrow">Your order</span>
             <h3>Cart</h3>
           </div>
-          <span>{cart.reduce((sum, item) => sum + item.quantity, 0)} items</span>
+          <span>
+            {cart.reduce((sum, item) => sum + item.quantity, 0)} items
+          </span>
         </div>
 
         <div className="cart-items">
@@ -280,9 +353,19 @@ export default function App() {
                 </div>
                 <div className="item-controls">
                   <div className="qty-box">
-                    <button className="qty-btn" onClick={() => updateQty(item.id, -1)}>−</button>
+                    <button
+                      className="qty-btn"
+                      onClick={() => updateQty(item.id, -1)}
+                    >
+                      −
+                    </button>
                     <span>{item.quantity}</span>
-                    <button className="qty-btn" onClick={() => updateQty(item.id, 1)}>+</button>
+                    <button
+                      className="qty-btn"
+                      onClick={() => updateQty(item.id, 1)}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               </div>
@@ -305,7 +388,9 @@ export default function App() {
           </div>
         </div>
 
-        <button className="checkout-btn" onClick={handleCheckout}>Checkout</button>
+        <button className="checkout-btn" onClick={handleCheckout}>
+          Checkout
+        </button>
       </aside>
 
       {message && <div className="toast show">{message}</div>}

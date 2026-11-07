@@ -2,12 +2,36 @@
   "name": "bistro-byte-app",
   "private": true,
   "version": "1.0.0",
+  "main": "electron/main.js",
   "scripts": {
-    "install:all": "npm --prefix backend install && npm --prefix frontend install",
-    "dev": "concurrently \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
-    "build": "npm --prefix frontend run build"
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
+    "postinstall": "node scripts/ensure-electron.js",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev": "concurrently -k \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "desktop": "node scripts/launch-desktop.js",
+    "desktop:debug": "ELECTRON_ENABLE_LOGGING=1 node scripts/launch-desktop.js",
+    "build": "npm --prefix frontend run build",
+    "start": "npm run dev",
+    "dist": "npm run build && electron-builder"
+  },
+  "build": {
+    "appId": "com.bistrobyte.app",
+    "productName": "Bistro Byte",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "win": {
+      "target": "nsis"
+    }
   },
   "devDependencies": {
-    "concurrently": "^9.0.1"
+    "concurrently": "^9.2.5",
+    "electron": "^32.2.1",
+    "electron-builder": "^25.1.4",
+    "wait-on": "^8.0.5"
+  },
+  "allowScripts": {
+    "electron@32.2.1": true
   }
 }
